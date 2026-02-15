@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'database_service.dart';
@@ -13,6 +14,8 @@ class NotificationService {
   static const String _endHourKey = 'notification_end_hour';
 
   Future<void> initialize() async {
+    if (kIsWeb) return; // Notifications not supported on web
+
     const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
@@ -36,6 +39,8 @@ class NotificationService {
   }
 
   Future<void> requestPermissions() async {
+    if (kIsWeb) return;
+
     await _notifications
         .resolvePlatformSpecificImplementation<
             IOSFlutterLocalNotificationsPlugin>()
@@ -48,6 +53,7 @@ class NotificationService {
   }
 
   Future<void> scheduleWordReminders(DatabaseService dbService) async {
+    if (kIsWeb) return;
     final prefs = await SharedPreferences.getInstance();
     final enabled = prefs.getBool(_enabledKey) ?? true;
     if (!enabled) {
@@ -119,6 +125,7 @@ class NotificationService {
     required String title,
     required String body,
   }) async {
+    if (kIsWeb) return;
     const androidDetails = AndroidNotificationDetails(
       'word_reminder_channel',
       'Kelime Hatırlatmaları',
@@ -134,6 +141,7 @@ class NotificationService {
   }
 
   Future<void> cancelAllNotifications() async {
+    if (kIsWeb) return;
     await _notifications.cancelAll();
   }
 

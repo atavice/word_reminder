@@ -104,4 +104,46 @@ class WordProvider extends ChangeNotifier {
     _translationResult = null;
     notifyListeners();
   }
+
+  /// Normalizes a language pair key so both directions map to the same defter.
+  String _pairKey(String lang1, String lang2) {
+    final sorted = [lang1, lang2]..sort();
+    return '${sorted[0]}_${sorted[1]}';
+  }
+
+  /// Returns unique language pairs (bidirectional) with word counts.
+  List<Map<String, dynamic>> getLanguagePairs() {
+    final pairCounts = <String, Map<String, dynamic>>{};
+    for (final word in _words) {
+      final key = _pairKey(word.sourceLang, word.targetLang);
+      if (pairCounts.containsKey(key)) {
+        pairCounts[key]!['count'] = (pairCounts[key]!['count'] as int) + 1;
+      } else {
+        final sorted = [word.sourceLang, word.targetLang]..sort();
+        pairCounts[key] = {
+          'lang1': sorted[0],
+          'lang2': sorted[1],
+          'count': 1,
+        };
+      }
+    }
+    return pairCounts.values.toList();
+  }
+
+  /// Returns words for a bidirectional language pair (both directions).
+  List<Word> getWordsForPair(String lang1, String lang2) {
+    var filtered = _words
+        .where((w) =>
+            (w.sourceLang == lang1 && w.targetLang == lang2) ||
+            (w.sourceLang == lang2 && w.targetLang == lang1))
+        .toList();
+    if (_searchQuery.isNotEmpty) {
+      filtered = filtered
+          .where((w) =>
+              w.sourceWord.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+              w.translatedWord.toLowerCase().contains(_searchQuery.toLowerCase()))
+          .toList();
+    }
+    return filtered;
+  }
 }

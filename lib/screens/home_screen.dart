@@ -57,9 +57,9 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('WordReminder'),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.list),
-            tooltip: 'Kelime Listem',
+          TextButton.icon(
+            icon: const Icon(Icons.menu_book),
+            label: const Text('Kelime Defterim'),
             onPressed: () {
               Navigator.push(
                 context,
@@ -179,24 +179,18 @@ class _HomeScreenState extends State<HomeScreen> {
   String _langDisplayName(String code) {
     const names = {
       'en': 'English',
-      'tr': 'Türkçe',
       'de': 'Deutsch',
-      'fr': 'Français',
+      'tr': 'Türkçe',
       'es': 'Español',
+      'fr': 'Français',
       'it': 'Italiano',
-      'pt': 'Português',
-      'ru': 'Русский',
-      'ja': '日本語',
-      'ko': '한국어',
-      'zh': '中文',
-      'ar': 'العربية',
     };
     return names[code] ?? code;
   }
 
   void _showLangPicker(BuildContext context, {required bool isSource}) {
     final provider = context.read<WordProvider>();
-    final langs = ['en', 'tr', 'de', 'fr', 'es', 'it', 'pt', 'ru', 'ja', 'ko', 'zh', 'ar'];
+    final langs = ['en', 'de', 'tr', 'es', 'fr', 'it'];
 
     showModalBottomSheet(
       context: context,
